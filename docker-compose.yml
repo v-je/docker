@@ -1,0 +1,66 @@
+version: '3.8'
+services:
+    updatecerts:
+        image: vjedev/certupdater:latest
+        volumes:
+            - certs:/certs
+    landingpage:
+        image: vjedev/landingpage:latest
+        volumes:
+            - ./websites:/websites
+    databaseimportexport:
+        image: vjedev/database-import-export:latest
+        volumes:
+            - ./websites:/websites
+        links:
+            - mysql
+        networks:
+            vpcbr:
+                ipv4_address: 192.168.56.5
+    web:
+        image: nginx:latest
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+            - certs:/certs
+            - ./websites:/websites
+        links:
+            - php
+        networks:
+            vpcbr:
+                ipv4_address: 192.168.56.2
+    php:
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
+        volumes:
+            - ./websites:/websites
+        networks:
+            vpcbr:
+                ipv4_address: 192.168.56.3
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: 'student'
+            MYSQL_USER: 'student'
+            MYSQL_PASSWORD: 'student'
+        volumes:
+            - mysqldata:/var/lib/mysql
+        ports:
+            - 3306:3306
+        networks:
+            vpcbr:
+                ipv4_address: 192.168.56.4
+networks:
+    vpcbr:
+        driver: bridge
+        ipam:
+            config:
+             - subnet: 192.168.56.0/24
+               gateway: 192.168.56.1
+                    
+volumes:
+    mysqldata: {}
+    certs: {}
