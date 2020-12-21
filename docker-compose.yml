@@ -3,7 +3,7 @@ services:
     updatecerts:
         image: vjedev/certupdater:latest
         volumes:
-            - certs:/certs
+            - ./certs:/certs
     landingpage:
         image: vjedev/landingpage:latest
         volumes:
@@ -14,9 +14,6 @@ services:
             - ./websites:/websites
         links:
             - mysql
-        networks:
-            vpcbr:
-                ipv4_address: 192.168.56.5
     web:
         image: nginx:latest
         ports:
@@ -24,22 +21,18 @@ services:
             - "443:443"
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
-            - certs:/certs
+            - ./certs:/certs
             - ./websites:/websites
         links:
             - php
-        networks:
-            vpcbr:
-                ipv4_address: 192.168.56.2
+        depends_on:
+            - updatecerts
     php:
         build:
             context: .
             dockerfile: PHP.Dockerfile
         volumes:
             - ./websites:/websites
-        networks:
-            vpcbr:
-                ipv4_address: 192.168.56.3
     mysql:
         image: mariadb:latest
         environment:
@@ -49,18 +42,7 @@ services:
         volumes:
             - mysqldata:/var/lib/mysql
         ports:
-            - 3306:3306
-        networks:
-            vpcbr:
-                ipv4_address: 192.168.56.4
-networks:
-    vpcbr:
-        driver: bridge
-        ipam:
-            config:
-             - subnet: 192.168.56.0/24
-               gateway: 192.168.56.1
-                    
+            - 3306:3306                   
 volumes:
     mysqldata: {}
     certs: {}
