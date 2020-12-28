@@ -3,7 +3,7 @@ services:
     updatecerts:
         image: vjedev/certupdater:latest
         volumes:
-            - ./certs:/certs
+            - certs:/certs
     landingpage:
         image: vjedev/landingpage:latest
         volumes:
@@ -21,7 +21,7 @@ services:
             - "443:443"
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
-            - ./certs:/certs
+            - certs:/certs
             - ./websites:/websites
         links:
             - php
