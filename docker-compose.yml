@@ -42,7 +42,17 @@ services:
         volumes:
             - mysqldata:/var/lib/mysql
         ports:
-            - 3306:3306                   
+            - 3306:3306
+    phpunit:
+        image: phpunit/phpunit:latest
+        working_dir: /websites/default
+        volumes:
+          - ./websites:/websites
+    composer:
+        image: composer:latest
+        working_dir: /websites/default
+        volumes:
+          - ./websites:/websites
 volumes:
     mysqldata: {}
     certs: {}
