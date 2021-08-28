@@ -13,6 +13,8 @@ services:
         image: vjedev/database-import-export:latest
         volumes:
             - ./websites:/websites
+        depends_on:
+            - mysql
     web:
         image: nginx:latest
         ports:
@@ -42,8 +44,6 @@ services:
             - mysqlconf:/etc/mysql/conf.d/
         ports:
             - 3306:3306
-        depends_on:
-            - updatecerts
     phpunit:
         image: phpunit/phpunit:latest
         working_dir: /websites/default
