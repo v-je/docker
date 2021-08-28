@@ -4,6 +4,7 @@ services:
         image: vjedev/certupdater:latest
         volumes:
             - certs:/certs
+            - mysqlconf:/mysqlconf
     landingpage:
         image: vjedev/landingpage:latest
         volumes:
@@ -12,8 +13,6 @@ services:
         image: vjedev/database-import-export:latest
         volumes:
             - ./websites:/websites
-        links:
-            - mysql
     web:
         image: nginx:latest
         ports:
@@ -23,8 +22,6 @@ services:
             - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
             - certs:/certs
             - ./websites:/websites
-        links:
-            - php
         depends_on:
             - updatecerts
     php:
@@ -36,23 +33,32 @@ services:
     mysql:
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: 'student'
-            MYSQL_USER: 'student'
-            MYSQL_PASSWORD: 'student'
+            MYSQL_ROOT_PASSWORD: 'v.je'
+            MYSQL_USER: 'v.je'
+            MYSQL_PASSWORD: 'v.je'
         volumes:
             - mysqldata:/var/lib/mysql
+            - certs:/ssl
+            - mysqlconf:/etc/mysql/conf.d/
         ports:
             - 3306:3306
+        depends_on:
+            - updatecerts
     phpunit:
         image: phpunit/phpunit:latest
         working_dir: /websites/default
         volumes:
-          - ./websites:/websites
+            - ./websites:/websites
+        profiles:
+            - phpunit
     composer:
         image: composer:latest
         working_dir: /websites/default
         volumes:
-          - ./websites:/websites
+            - ./websites:/websites
+        profiles:
+            - composer
 volumes:
     mysqldata: {}
     certs: {}
+    mysqlconf: {}
