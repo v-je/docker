@@ -58,6 +58,9 @@ services:
             - ./websites:/websites
         profiles:
             - composer
+    maildev:
+        image: maildev/maildev:latest
+
 volumes:
     mysqldata: {}
     certs: {}
