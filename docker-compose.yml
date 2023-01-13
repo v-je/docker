@@ -45,15 +45,21 @@ services:
         ports:
             - 3306:3306
     phpunit:
-        image: phpunit/phpunit:latest
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
         working_dir: /websites/default
+        entrypoint: 'vendor/bin/phpunit'
         volumes:
             - ./websites:/websites
         profiles:
             - phpunit
     composer:
-        image: composer:latest
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
         working_dir: /websites/default
+        entrypoint: /usr/bin/composer
         volumes:
             - ./websites:/websites
         profiles:

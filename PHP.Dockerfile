@@ -1,5 +1,7 @@
 FROM php:fpm-alpine
 
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
 RUN apk add --no-cache $PHPIZE_DEPS
 RUN apk add --no-cache linux-headers
 RUN pecl install xdebug 
