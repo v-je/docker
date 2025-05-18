@@ -40,8 +40,6 @@ services:
             MYSQL_PASSWORD: 'v.je'
         volumes:
             - mysqldata:/var/lib/mysql
-            - certs:/ssl
-            - mysqlconf:/etc/mysql/conf.d/
         ports:
             - 3306:3306
     phpunit:
